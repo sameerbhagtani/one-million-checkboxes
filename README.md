@@ -4,6 +4,8 @@
 
 One Million Checkboxes is a realtime collaborative web app where users interact with a shared grid of 1,000,000 checkboxes. Every toggle updates centralized state in Redis and is broadcast to connected clients with Socket.IO.
 
+This project is part of my [ChaiCode Web Dev Cohort 2026 Archive](https://github.com/sameerbhagtani/web-dev-cohort-2026). Checkout my entire journey there!
+
 ---
 
 ## Live Demo
