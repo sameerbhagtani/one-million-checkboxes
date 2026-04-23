@@ -1,0 +1,17 @@
+services:
+    redis:
+        image: redis:8-alpine
+        container_name: one-million-checkboxes-redis
+        restart: unless-stopped
+
+        ports:
+            - "6379:6379"
+
+        command: redis-server --appendonly yes --appendfsync everysec
+
+        volumes:
+            - redis_data:/data
+
+volumes:
+    redis_data:
+        name: one-million-checkboxes-redis-data
