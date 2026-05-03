@@ -4,14 +4,19 @@ import express, {
     type Response,
     type NextFunction,
 } from "express";
+import cookieParser from "cookie-parser";
+import authRoutes from "./auth/routes.js";
 import checkboxRoutes from "./checkbox/routes.js";
+import { verifyAuthCookie } from "../middlewares/authMiddleware.js";
 import AppError from "../utils/AppError.js";
 
 export default function createServerApplication(): Application {
     const app = express();
 
     app.use(express.json());
+    app.use(cookieParser());
     app.use(express.static("public"));
+    app.use(verifyAuthCookie);
 
     app.get("/api/ping", (req, res) => {
         return res.status(200).json({
@@ -20,6 +25,7 @@ export default function createServerApplication(): Application {
         });
     });
 
+    app.use("/auth", authRoutes);
     app.use("/api/checkboxes", checkboxRoutes);
 
     app.use((req: Request, res: Response) => {

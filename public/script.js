@@ -106,6 +106,12 @@ function handleContainerChange(event) {
     if (!(target instanceof HTMLInputElement)) return;
     if (target.type !== "checkbox") return;
 
+    if (!isAuthenticated()) {
+        target.checked = !target.checked;
+        alert("Please log in to participate");
+        return;
+    }
+
     const id = Number(target.dataset.id);
     if (!Number.isInteger(id)) return;
 
@@ -149,7 +155,6 @@ container.addEventListener("scroll", () => {
 });
 
 socket.on("server:toggled", async (payload) => {
-    // ignore events that originated from this client
     if (payload?.origin && payload.origin === socket.id) return;
 
     const id = Number(payload?.id);

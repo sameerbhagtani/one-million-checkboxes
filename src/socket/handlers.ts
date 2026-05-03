@@ -2,13 +2,21 @@ import { type Server } from "socket.io";
 import { toggleCheckbox } from "../app/checkbox/service.js";
 import { checkboxTogglePayloadSchema } from "../app/checkbox/schema.js";
 import { publishToggleEvent } from "../config/pubsub.js";
+import { type AuthenticatedSocket } from "../middlewares/socketAuthMiddleware.js";
 
 export default function registerSocketHandlers(io: Server) {
-    io.on("connection", (socket) => {
+    io.on("connection", (socket: AuthenticatedSocket) => {
         console.log(`New socket connected : ${socket.id}`);
 
         socket.on("client:toggled", async (payload: unknown) => {
             try {
+                if (!socket.user) {
+                    socket.emit("server:error", {
+                        message: "Authentication required to toggle checkbox",
+                    });
+                    return;
+                }
+
                 const parseResult =
                     checkboxTogglePayloadSchema.safeParse(payload);
                 if (!parseResult.success) {

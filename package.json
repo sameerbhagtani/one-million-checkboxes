@@ -16,13 +16,17 @@
     "license": "ISC",
     "type": "module",
     "dependencies": {
+        "axios": "^1.7.0",
+        "cookie-parser": "^1.4.7",
         "dotenv": "^17.4.2",
         "express": "^5.2.1",
+        "jose": "^6.2.3",
         "redis": "^5.12.1",
         "socket.io": "^4.8.3",
         "zod": "^4.3.6"
     },
     "devDependencies": {
+        "@types/cookie-parser": "^1.4.7",
         "@types/express": "^5.0.6",
         "@types/node": "^25.6.0",
         "tsc-watch": "^7.2.0",
