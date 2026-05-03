@@ -9,6 +9,12 @@ const envSchema = z.object({
     OAUTH_CLIENT_SECRET: z.string().min(1),
     OAUTH_REDIRECT_URI: z.url(),
     OAUTH_DISCOVERY_URL: z.url(),
+    TOGGLE_RATE_LIMIT_COUNT: z.coerce.number().int().positive().default(30),
+    TOGGLE_RATE_LIMIT_WINDOW_SECONDS: z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(60),
 });
 
 function createEnv(env: NodeJS.ProcessEnv) {

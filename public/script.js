@@ -4,12 +4,31 @@ const SCROLL_THRESHOLD_PX = 300;
 
 const container = document.getElementById("container");
 const checkedCountElement = document.getElementById("checked-count");
+const statusToastElement = document.getElementById("status-toast");
 const socket = io();
 
 let nextOffset = 0;
 let isLoadingPage = false;
 let hasLoadedAllPages = false;
 let checkedCount = 0;
+let toastTimeoutId = null;
+
+function showStatusToast(message, type = "error") {
+    if (!statusToastElement) return;
+
+    statusToastElement.textContent = message;
+    statusToastElement.className = `status-toast ${type}`;
+    statusToastElement.style.display = "block";
+
+    if (toastTimeoutId) {
+        clearTimeout(toastTimeoutId);
+    }
+
+    toastTimeoutId = window.setTimeout(() => {
+        if (!statusToastElement) return;
+        statusToastElement.style.display = "none";
+    }, 2500);
+}
 
 function setCheckedCount(value) {
     checkedCount = Math.max(0, Math.min(TOTAL_CHECKBOXES, value));
@@ -101,6 +120,18 @@ function toggleCheckboxById(id) {
     return true;
 }
 
+async function rollbackOptimisticToggle(id) {
+    const didToggleVisibleCheckbox = toggleCheckboxById(id);
+    if (didToggleVisibleCheckbox) return;
+
+    try {
+        const latestCount = await fetchCheckedCount();
+        setCheckedCount(latestCount);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 function handleContainerChange(event) {
     const target = event.target;
     if (!(target instanceof HTMLInputElement)) return;
@@ -172,7 +203,18 @@ socket.on("server:toggled", async (payload) => {
 });
 
 socket.on("server:error", (payload) => {
-    console.error(payload.message);
+    const message =
+        typeof payload?.message === "string"
+            ? payload.message
+            : "Action failed";
+
+    showStatusToast(message, "error");
+    console.error(message);
+
+    const id = Number(payload?.id);
+    if (Number.isInteger(id)) {
+        rollbackOptimisticToggle(id);
+    }
 });
 
 initialize();
