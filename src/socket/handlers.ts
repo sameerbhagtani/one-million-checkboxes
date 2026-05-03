@@ -1,6 +1,7 @@
 import { type Server } from "socket.io";
 import { toggleCheckbox } from "../app/checkbox/service.js";
 import { checkboxTogglePayloadSchema } from "../app/checkbox/schema.js";
+import { publishToggleEvent } from "../config/pubsub.js";
 
 export default function registerSocketHandlers(io: Server) {
     io.on("connection", (socket) => {
@@ -20,7 +21,7 @@ export default function registerSocketHandlers(io: Server) {
                 const { id } = parseResult.data;
                 await toggleCheckbox(id);
 
-                socket.broadcast.emit("server:toggled", payload);
+                await publishToggleEvent({ id, origin: socket.id });
             } catch (err) {
                 console.error(err);
                 socket.emit("server:error", {

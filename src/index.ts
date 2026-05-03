@@ -3,6 +3,7 @@ import createServerApplication from "./app/index.js";
 import createSocketServer from "./socket/index.js";
 
 import { connectRedis, disconnectRedis } from "./config/redis.js";
+import { subscribeToPubSub, disconnectPubSub } from "./config/pubsub.js";
 import { initializeCheckboxes } from "./app/checkbox/service.js";
 
 import { promisify } from "node:util";
@@ -18,6 +19,10 @@ async function main() {
         const server = createServer(createServerApplication());
         const io = createSocketServer(server);
 
+        await subscribeToPubSub((payload) => {
+            io.emit("server:toggled", payload);
+        });
+
         const closeServer = promisify(server.close.bind(server));
 
         async function shutdown(signal: string) {
@@ -30,6 +35,7 @@ async function main() {
             await closeServer();
             console.log(`✅ Server stopped`);
 
+            await disconnectPubSub();
             await disconnectRedis();
             process.exit(0);
         }

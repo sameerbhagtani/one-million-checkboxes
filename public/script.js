@@ -149,6 +149,9 @@ container.addEventListener("scroll", () => {
 });
 
 socket.on("server:toggled", async (payload) => {
+    // ignore events that originated from this client
+    if (payload?.origin && payload.origin === socket.id) return;
+
     const id = Number(payload?.id);
     if (!Number.isInteger(id)) return;
 
