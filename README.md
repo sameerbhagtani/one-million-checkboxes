@@ -14,7 +14,7 @@ This project is part of my [ChaiCode Web Dev Cohort 2026 Archive](https://github
 
 ---
 
-## Live Demo
+## Live URL
 
 Live Link: https://checkboxes.sameerbhagtani.dev
 
@@ -54,6 +54,12 @@ Live Link: https://checkboxes.sameerbhagtani.dev
 - CSS
 - JavaScript
 - Socket.IO Client
+
+### External Services
+
+- Custom OIDC/OAuth 2.0 server
+    - Hosted at: https://auth.sameerbhagtani.dev
+    - GitHub Repo: https://github.com/sameerbhagtani/sam-auth
 
 ---
 
